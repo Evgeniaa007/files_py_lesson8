@@ -37,25 +37,51 @@ def search_data(contacts: list[str]): # Функция поиска данных
             founded.append(contact)
     return founded
 
-def copy_data(file, file2, line):
-    with open(file, 'r', encoding='utf-8') as f:
-        lines = f.readlines()
-    if line > len(lines):
-        print('Нет строки с таким номером')
-        return
-    with open(file2, 'w', encoding='utf-8') as dest:
-        dest.write(f'{lines[line -1]}\n')
+# def copy_data(file, file2, line):
+#     with open(file, 'r', encoding='utf-8') as f:
+#         lines = f.readlines()
+#     if line > len(lines):
+#         print('Нет строки с таким номером')
+#         return
+#     with open(file2, 'w', encoding='utf-8') as dest:
+#         dest.write(f'{lines[line -1]}\n')
+#         for i in range(len(lines)):
+#             if i != line-1:
+#                 dest.write(lines[i])
+def new_save(file, data):
+    if len(data)>0:
+        with open(file, 'w', encoding='utf-8') as f:
+            f.seek(0)
+            f.writelines(data)
+        return True
+
+
+def edit_data (data, chng_index, file):
+    print('0 - Фамилию')
+    print('1 - Имя')
+    print('2 - Отчество')
+    print('3 - Телефон')
+    choice = int(input(('Выберите, что хотите изменить: ')))
+    temp = data[chng_index].split(', ')
+    temp[choice] = input('Введите новое значение: ')
+    data[chng_index] = ', '.join(temp)+'\n'
+    new_save(file, data)
+
+def delite_data(data, file):
+    del_index = int(input('Введите номер строки для удаления записи:'))-1
+    data[del_index] = str()
+    new_save(file, data)
 
 def main():
     file_name = 'phone_book.txt'
-    file_2 = 'phones_copy.txt'
     flag = True
     while flag:
         print('0 - выход')
         print('1 - запись в файл')
         print('2 - показать записи')
         print('3 - найти запись')
-        print('4 - скопировать данные')
+        print('4 - изменить данные')
+        print('5 - удалить данные из справочника')
         answer = input('Выберите действие: ')
         if answer == '0':
             flag = False
@@ -69,9 +95,14 @@ def main():
             founded_data = search_data(data)
             show_data(founded_data)
         elif answer == '4':
-            line_number = int(input('Введите номер строки, которую нужно скопировать в другой файл: '))
-            copy_data(file_name, file_2, line_number)
-
+            data = read_file(file_name)
+            show_data(data) 
+            change_index = int(input('Чтобы отредактировать данные - введите номер строки:'))-1
+            edit_data(data, change_index, file_name)
+        elif answer == '5':
+            data = read_file(file_name)
+            show_data(data) 
+            delite_data(data, file_name)
 
 if __name__ == '__main__':
     main()
