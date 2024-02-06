@@ -67,13 +67,21 @@ def edit_data (data, chng_index, file):
     data[chng_index] = ', '.join(temp)+'\n'
     new_save(file, data)
 
-def delite_data(data, file):
-    del_index = int(input('Введите номер строки для удаления записи:'))-1
-    data[del_index] = str()
+def delete_data(data, idx, file): 
+    del data[idx]
     new_save(file, data)
+
+def copy_to_file(data, idx, file_2):
+    if idx > len(data):
+        print('Нет строки с таким номером')
+        return
+    with open(file_2, 'a', encoding='utf-8') as export:
+        export.write(f'{data[idx]}\n')
+
 
 def main():
     file_name = 'phone_book.txt'
+    file_name_copy = 'phone_book_copy.txt'
     flag = True
     while flag:
         print('0 - выход')
@@ -82,6 +90,7 @@ def main():
         print('3 - найти запись')
         print('4 - изменить данные')
         print('5 - удалить данные из справочника')
+        print('6 - копировать данные о пользователе в другой файл')
         answer = input('Выберите действие: ')
         if answer == '0':
             flag = False
@@ -100,9 +109,13 @@ def main():
             change_index = int(input('Чтобы отредактировать данные - введите номер строки:'))-1
             edit_data(data, change_index, file_name)
         elif answer == '5':
-            data = read_file(file_name)
-            show_data(data) 
-            delite_data(data, file_name)
+            data = read_file(file_name) 
+            idx_delete = int(input('Введите строку, которую надо удалить: ')) - 1
+            delete_data(data, idx_delete, file_name)
+        elif answer == '6':
+            data = read_file(file_name) 
+            idx_copy = int(input('Введите номер строки, для экспорта: ')) - 1
+            copy_to_file(data, idx_copy, file_name_copy)
 
 if __name__ == '__main__':
     main()
